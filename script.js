@@ -131,4 +131,3 @@ function renderBossDashboard() {
 document.addEventListener('DOMContentLoaded', () => {
     renderBossDashboard();
 });
-
