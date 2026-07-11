@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dar Container Express | DCE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dce-container">
+        <h1>Dar Container Express</h1>
+        <p>Omba lori la kontena sasa hivi</p>
+        
+        <form id="dceRequestForm">
+            <label>Mzigo Upo Wapi? (Bandari/ICD)</label>
+            <select id="origin">
+                <option value="DP_WORLD">DP WORLD (Bandari Kuu)</option>
+                <option value="TPA">TPA (Mamlaka ya Bandari)</option>
+                <option value="JEFAG">Jefag ICD</option>
+                <option value="AFRICAN">African ICD</option>
+                <option value="TRH">TRH ICD</option>
+                <option value="AZAM">Azam ICD</option>
+                <option value="DSM_ICD">Dar es Salaam ICD</option>
+                <option value="PMM_ESTATE">PMM Estate ICD</option>
+                <option value="GALCO">Galco ICD</option>
+                <option value="BRAVO">Bravo Group ICD</option>
+                <option value="CORRIDOR">Corridor Group ICD</option>
+                <option value="STEINWEG">Steinweg ICD</option>
+            </select>
+
+            <label>Ukubwa & Uzito wa Kontena</label>
+            <select id="weightClass">
+                <option value="40ft">Futi 40 (40ft Container)</option>
+                <option value="20ft_light">Futi 20 - Mwepesi (Light)</option>
+                <option value="20ft_heavy">Futi 20 - Mzito (Heavy)</option>
+            </select>
+
+            <label>Linaenda Wapi? (Destination)</label>
+            <input type="text" id="destination" placeholder="Mfano: Kibaha, Mbagala, Vingunguti" required>
+
+            <label>Yadi ya Empty (Shipping Line)</label>
+            <select id="shippingLine">
+                <option value="MAERSK">Maersk</option>
+                <option value="MSC">MSC</option>
+                <option value="CMA_CGM">CMA CGM</option>
+                <option value="EVERGREEN">Evergreen</option>
+                <option value="COSCO">COSCO</option>
+                <option value="EMIRATES">Emirates</option>
+                <option value="HAPAG_LLOYD">Hapag-Lloyd</option>
+                <option value="PIL">PIL</option>
+                <option value="SAFMARINE">Safmarine</option>
+                <option value="DELMAS">Delmas</option>
+                <option value="NYK_LINE">NYK Line</option>
+                <option value="K_LINE">K Line</option>
+                <option value="YANG_MING">Yang Ming</option>
+                <option value="ZIM">ZIM Shipping</option>
+            </select>
+
+            <button type="button" onclick="submitRequest()">TUMA MAOMBI</button>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
