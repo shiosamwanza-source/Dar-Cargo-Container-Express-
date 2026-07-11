@@ -3,62 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dar Container Express | DCE</title>
+    <title>Dar Container Express | DCE Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="dce-container">
-        <h1>Dar Container Express</h1>
-        <p>Omba lori la kontena sasa hivi</p>
-        
-        <form id="dceRequestForm">
-            <label>Mzigo Upo Wapi? (Bandari/ICD)</label>
-            <select id="origin">
-                <option value="DP_WORLD">DP WORLD (Bandari Kuu)</option>
-                <option value="TPA">TPA (Mamlaka ya Bandari)</option>
-                <option value="JEFAG">Jefag ICD</option>
-                <option value="AFRICAN">African ICD</option>
-                <option value="TRH">TRH ICD</option>
-                <option value="AZAM">Azam ICD</option>
-                <option value="DSM_ICD">Dar es Salaam ICD</option>
-                <option value="PMM_ESTATE">PMM Estate ICD</option>
-                <option value="GALCO">Galco ICD</option>
-                <option value="BRAVO">Bravo Group ICD</option>
-                <option value="CORRIDOR">Corridor Group ICD</option>
-                <option value="STEINWEG">Steinweg ICD</option>
-            </select>
+    <div class="dce-app-wrapper">
+        <!-- Sehemu ya Juu ya Nembo na Jina -->
+        <header class="dce-header">
+            <h1>Dar Container Express (DCE)</h1>
+            <p>Mfumo Jumuishi wa Usafirishaji wa Makontena Bandarini</p>
+        </header>
 
-            <label>Ukubwa & Uzito wa Kontena</label>
-            <select id="weightClass">
-                <option value="40ft">Futi 40 (40ft Container)</option>
-                <option value="20ft_light">Futi 20 - Mwepesi (Light)</option>
-                <option value="20ft_heavy">Futi 20 - Mzito (Heavy)</option>
-            </select>
+        <!-- Menu ya Kubadili Dashibodi (Tabs) -->
+        <nav class="dce-tabs">
+            <button class="tab-btn active" onclick="switchTab('agent-panel')">Wakala (Maombi)</button>
+            <button class="tab-btn" onclick="switchTab('driver-panel')">Dereva (Usajili)</button>
+            <button class="tab-btn" onclick="switchTab('boss-panel')">Uongozi (Boss Control)</button>
+        </nav>
 
-            <label>Linaenda Wapi? (Destination)</label>
-            <input type="text" id="destination" placeholder="Mfano: Kibaha, Mbagala, Vingunguti" required>
+        <!-- 1. PANEL YA WAKALA (AGENT) -->
+        <section id="agent-panel" class="tab-content active">
+            <div class="dce-card">
+                <h2>Omba Lori la Kontena Sasa</h2>
+                <form id="dceRequestForm">
+                    <label>Mzigo Upo Wapi? (Bandari/ICD)</label>
+                    <select id="origin">
+                        <option value="DP_WORLD">DP WORLD (Bandari Kuu)</option>
+                        <option value="TPA">TPA (Mamlaka ya Bandari)</option>
+                        <option value="JEFAG">Jefag ICD</option>
+                        <option value="AFRICAN">African ICD</option>
+                        <option value="TRH">TRH ICD</option>
+                        <option value="AZAM">Azam ICD</option>
+                        <option value="DSM_ICD">Dar es Salaam ICD</option>
+                        <option value="PMM_ESTATE">PMM Estate ICD</option>
+                        <option value="GALCO">Galco ICD</option>
+                        <option value="BRAVO">Bravo Group ICD</option>
+                        <option value="CORRIDOR">Corridor Group ICD</option>
+                        <option value="STEINWEG">Steinweg ICD</option>
+                    </select>
 
-            <label>Yadi ya Empty (Shipping Line)</label>
-            <select id="shippingLine">
-                <option value="MAERSK">Maersk</option>
-                <option value="MSC">MSC</option>
-                <option value="CMA_CGM">CMA CGM</option>
-                <option value="EVERGREEN">Evergreen</option>
-                <option value="COSCO">COSCO</option>
-                <option value="EMIRATES">Emirates</option>
-                <option value="HAPAG_LLOYD">Hapag-Lloyd</option>
-                <option value="PIL">PIL</option>
-                <option value="SAFMARINE">Safmarine</option>
-                <option value="DELMAS">Delmas</option>
-                <option value="NYK_LINE">NYK Line</option>
-                <option value="K_LINE">K Line</option>
-                <option value="YANG_MING">Yang Ming</option>
-                <option value="ZIM">ZIM Shipping</option>
-            </select>
+                    <label>Ukubwa & Uzito wa Kontena</label>
+                    <select id="weightClass">
+                        <option value="40ft">Futi 40 (40ft Container)</option>
+                        <option value="20ft_light">Futi 20 - Mwepesi (Light Single-Diff)</option>
+                        <option value="20ft_heavy">Futi 20 - Mzito (Heavy Semi-Trailer)</option>
+                    </select>
 
-            <button type="button" onclick="submitRequest()">TUMA MAOMBI</button>
-        </form>
+                    <label>Linaenda Wapi? (Destination)</label>
+                    <input type="text" id="destination" placeholder="Mfano: Kibaha, Mbagala, Vingunguti" required>
+
+                    <label>Yadi ya Empty (Shipping Line)</label>
+                    <select id="shippingLine">
+                        <option value="MAERSK">Maersk</option>
+                        <option value="MSC">MSC</option>
+                        <option value="CMA_CGM">CMA CGM</option>
+                        <option value="EVERGREEN">Evergreen</option>
+                        <option value="COSCO">COSCO</option>
+                        <option value="EMIRATES">Emirates</option>
+                        <option value="HAPAG_LLOYD">Hapag-Lloyd</option>
+                        <option value="PIL">PIL</option>
+                    </select>
+
+                    <button type="button" class="btn-primary" onclick="submitRequest()">TUMA MAOMBI YA LORI</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 2. PANEL YA DEREVA (DRIVER REGISTRATION & JOBS) -->
+        <section id="driver-panel" class="tab-content">
+            <div class="dce-card">
+                <h2>Usajili wa Dereva & Lori</h2>
+                <form id="driverForm">
+                    <label>Jina Kamili la Dereva</label>
+                    <input type="text" id="driverName" placeholder="Mfano: Juma Shabaan" required>
+
+                    <label>Namba ya Simu (Kwa Ajili ya Ofa/IVR)</label>
+                    <input type="text" id="driverPhone" placeholder="Mfano: 0711XXXXXX" required>
+
+                    <label>Namba ya Gari (Bamba la Usajili)</label>
+                    <input type="text" id="truckPlate" placeholder="Mfano: T 123 ABC / T 456 XYZ" required>
+
+                    <label>Aina ya Lori</label>
+                    <select id="truckType">
+                        <option value="Single-Diff">Single-Diff (Futi 20 tu - Mepesi)</option>
+                        <option value="Semi-Trailer">Semi-Trailer (Futi 40 au 20 Nzito)</option>
+                    </select>
+
+                    <button type="button" class="btn-success" onclick="registerDriver()">SAJILI LORI LANGU</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 3. PANEL YA UONGOZI (BOSS CONTROL DASHBOARD) -->
+        <section id="boss-panel" class="tab-content">
+            <div class="boss-statsgrid">
+                <div class="stat-box">
+                    <span class="stat-title">Maombi ya Mawakala</span>
+                    <span class="stat-number" id="count-requests">0</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-title">Malori Yaliyopo (Active)</span>
+                    <span class="stat-number" id="count-drivers">0</span>
+                </div>
+            </div>
+
+            <div class="dce-card">
+                <h2>Orodha Kuu ya Maombi ya Mawakala</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Kutoka</th>
+                                <th>Mzigo</th>
+                                <th>Kwenda</th>
+                                <th>Lori Linalohitajika</th>
+                                <th>Hali ya Ombi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="boss-requests-table">
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: #999;">Hakuna maombi yaliyotumwa kwa sasa.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dce-card" style="margin-top: 20px;">
+                <h2>Madereva Waliosajiliwa Kwenye Mfumo</h2>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dereva</th>
+                                <th>Simu</th>
+                                <th>Bamba la Gari</th>
+                                <th>Aina ya Lori</th>
+                            </tr>
+                        </thead>
+                        <tbody id="boss-drivers-table">
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: #999;">Hakuna dereva aliyesajiliwa bado.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
