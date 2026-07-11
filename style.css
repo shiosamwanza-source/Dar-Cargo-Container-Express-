@@ -1,216 +1,133 @@
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+// Safu ya Kuhifadhi Data katika Kumbukumbu ya Browser (Local Storage)
+let dceRequests = JSON.parse(localStorage.getItem('dce_requests')) || [];
+let dceDrivers = JSON.parse(localStorage.getItem('dce_drivers')) || [];
+
+// 1. Kazi ya Kubadili Tabu (Navigation Control)
+function switchTab(tabId) {
+    // Ondoa active kwenye tabu zote
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Washa tabu iliyobonyezwa
+    document.getElementById(tabId).classList.add('active');
+    
+    // Weka alama ya active kwenye kitufe husika
+    const event = window.event;
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
+
+    // Kama amefungua ubao wa Boss, sasisha takwimu
+    if (tabId === 'boss-panel') {
+        renderBossDashboard();
+    }
 }
 
-body {
-    background-color: #f3f4f6;
-    color: #1f2937;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
+// 2. Wakala Kutuma Ombi la Lori (Agent Request)
+function submitRequest() {
+    const origin = document.getElementById('origin').value;
+    const weightClass = document.getElementById('weightClass').value;
+    const destination = document.getElementById('destination').value;
+    const shippingLine = document.getElementById('shippingLine').value;
+
+    if (!destination.trim()) {
+        alert("Tafadhali weka mahali mzigo unapokwenda!");
+        return;
+    }
+
+    // Mantiki ya Kuchagua Aina Sahihi ya Lori (Routing/Allocation Logic)
+    let truckTypeRequired = "Semi-Trailer";
+    if (weightClass === "20ft_light") {
+        truckTypeRequired = "Single-Diff";
+    }
+
+    const newRequest = {
+        id: 'REQ-' + Date.now(),
+        origin: origin.replace('_', ' '),
+        weightClass: weightClass === '40ft' ? '40ft Container' : (weightClass === '20ft_light' ? '20ft Mwepesi' : '20ft Mzito'),
+        destination: destination,
+        shippingLine: shippingLine,
+        truckType: truckTypeRequired,
+        status: 'Inasubiri Lori'
+    };
+
+    dceRequests.push(newRequest);
+    localStorage.setItem('dce_requests', JSON.stringify(dceRequests));
+    
+    alert(`Ombi Limesajiliwa! Mfumo umechagua: Lori la ${truckTypeRequired}`);
+    document.getElementById('dceRequestForm').reset();
 }
 
-.dce-app-wrapper {
-    width: 100%;
-    max-width: 900px;
+// 3. Dereva Kujisajili Kwenye Mfumo (Driver Registration)
+function registerDriver() {
+    const name = document.getElementById('driverName').value;
+    const phone = document.getElementById('driverPhone').value;
+    const plate = document.getElementById('truckPlate').value;
+    const type = document.getElementById('truckType').value;
+
+    if (!name || !phone || !plate) {
+        alert("Tafadhali jaza taarifa zote za usajili wa lori!");
+        return;
+    }
+
+    const newDriver = {
+        id: 'DRV-' + Date.now(),
+        name: name,
+        phone: phone,
+        plate: plate,
+        type: type
+    };
+
+    dceDrivers.push(newDriver);
+    localStorage.setItem('dce_drivers', JSON.stringify(dceDrivers));
+
+    alert(`Hongera ${name}! Lori lako lenye namba ${plate} limesajiliwa DCE successfully.`);
+    document.getElementById('driverForm').reset();
 }
 
-/* Header Styling */
-.dce-header {
-    text-align: center;
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-    color: #ffffff;
-    padding: 25px 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+// 4. Kazi ya Kujaza Data Kwenye Ubao wa Uongozi (Boss Control Render)
+function renderBossDashboard() {
+    // Sasisha Idadi ya Takwimu Juu (Counters)
+    document.getElementById('count-requests').innerText = dceRequests.length;
+    document.getElementById('count-drivers').innerText = dceDrivers.length;
+
+    // Jaza Jedwali la Maombi
+    const reqTableBody = document.getElementById('boss-requests-table');
+    if (dceRequests.length === 0) {
+        reqTableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #999;">Hakuna maombi yaliyotumwa kwa sasa.</td></tr>`;
+    } else {
+        reqTableBody.innerHTML = dceRequests.map(req => `
+            <tr>
+                <td><strong>${req.origin}</strong></td>
+                <td>${req.weightClass} (${req.shippingLine})</td>
+                <td>${req.destination}</td>
+                <td><span style="color: #1e3a8a; font-weight:600;">${req.truckType}</span></td>
+                <td><span class="badge badge-pending">${req.status}</span></td>
+            </tr>
+        `).join('');
+    }
+
+    // Jaza Jedwali la Madereva
+    const drvTableBody = document.getElementById('boss-drivers-table');
+    if (dceDrivers.length === 0) {
+        drvTableBody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #999;">Hakuna dereva aliyesajiliwa bado.</td></tr>`;
+    } else {
+        drvTableBody.innerHTML = dceDrivers.map(drv => `
+            <tr>
+                <td><strong>${drv.name}</strong></td>
+                <td>${drv.phone}</td>
+                <td><span style="background:#e5e7eb; padding:2px 6px; border-radius:4px; font-family:monospace;">${drv.plate}</span></td>
+                <td>${drv.type}</td>
+            </tr>
+        `).join('');
+    }
 }
 
-.dce-header h1 {
-    font-size: 24px;
-    margin-bottom: 5px;
-    letter-spacing: 0.5px;
-}
-
-.dce-header p {
-    font-size: 14px;
-    opacity: 0.9;
-}
-
-/* Tabs System navigation */
-.dce-tabs {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    margin-bottom: 20px;
-    background-color: #e5e7eb;
-    border-radius: 8px;
-    overflow: hidden;
-    padding: 4px;
-}
-
-.tab-btn {
-    display: table-cell;
-    text-align: center;
-    background: none;
-    border: none;
-    padding: 12px 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #4b5563;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-}
-
-.tab-btn.active {
-    background-color: #ffffff;
-    color: #1e3a8a;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Card layout wrapper */
-.dce-card {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    margin-bottom: 20px;
-}
-
-.dce-card h2 {
-    font-size: 18px;
-    color: #111827;
-    margin-bottom: 18px;
-    border-left: 4px solid #1e3a8a;
-    padding-left: 10px;
-}
-
-/* Form Controls */
-form label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #374151;
-}
-
-form select, form input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 18px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    background-color: #f9fafb;
-    outline: none;
-    transition: border-color 0.2s;
-}
-
-form select:focus, form input:focus {
-    border-color: #3b82f6;
-    background-color: #ffffff;
-}
-
-/* Action Buttons */
-.btn-primary, .btn-success {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: opacity 0.2s;
-}
-
-.btn-primary { background-color: #1e3a8a; }
-.btn-success { background-color: #10b981; }
-.btn-primary:hover, .btn-success:hover { opacity: 0.9; }
-
-/* Dynamic Display Control */
-.tab-content {
-    display: none;
-}
-.tab-content.active {
-    display: block;
-}
-
-/* Boss Control Panel - Stats Grid */
-.boss-statsgrid {
-    display: table;
-    width: 100%;
-    table-layout: fixed;
-    border-collapse: separate;
-    border-spacing: 15px 0;
-    margin: 0 -15px 20px -15px;
-}
-
-.stat-box {
-    display: table-cell;
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    text-align: center;
-}
-
-.stat-title {
-    display: block;
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 5px;
-    font-weight: 500;
-}
-
-.stat-number {
-    font-size: 28px;
-    font-weight: bold;
-    color: #1e3a8a;
-}
-
-/* Responsive Custom Tables */
-.table-responsive {
-    width: 100%;
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 14px;
-}
-
-table th, table td {
-    padding: 12px 14px;
-    text-align: left;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-table th {
-    background-color: #f9fafb;
-    color: #4b5563;
-    font-weight: 600;
-}
-
-table tbody tr:hover {
-    background-color: #f9fafb;
-}
-
-/* Badges for status mapping */
-.badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-}
-.badge-pending { background-color: #fef3c7; color: #d97706; }
-.badge-assigned { background-color: #d1fae5; color: #059669; }
-
+// Hakikisha takwimu zinasoma mara ya kwanza ukurasa ukifunguka
+document.addEventListener('DOMContentLoaded', () => {
+    renderBossDashboard();
+});
